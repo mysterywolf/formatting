@@ -2,8 +2,21 @@ import os
 
 #用空格代替TAB键
 def tab2spaces(line):
-    #此处有问题，不是每次都是4个空格的
-    line = line.replace('\t','    ')
+    list_str = list(line) #字符串变成列表
+    i = list_str.count('\t')
+    
+    while i > 0:
+        ptr = list_str.index('\t')
+        del list_str[ptr]
+        space_need_to_insert = 4 - (ptr%4)
+        j = 0
+        while j < space_need_to_insert:
+            list_str.insert(ptr,' ')
+            j = j+1
+        
+        i = i-1
+
+    line = ''.join(list_str) #列表恢复成字符串
     return line
 
 
@@ -29,9 +42,9 @@ def change_indent_to_spaces(filename, encode):
     except FileNotFoundError:
         print("No file of such name")
     except UnicodeEncodeError:
-        pass
+        file.close()
     except UnicodeDecodeError:
-        pass
+        file.close()
 
 def traversalallfile(path,encode):
     filelist=os.listdir(path)
