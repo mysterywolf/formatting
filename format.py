@@ -56,7 +56,7 @@ def formatend(line):
     return line
 
 
-def change_indent_to_spaces(filename, encode):
+def format_codes(filename, encode):
     try:
         file=open(filename,'r', encoding=encode)
         file_temp=open('temp','w')
@@ -84,7 +84,7 @@ def traversalallfile(path,encode):
             traversalallfile(filepath,encode)
         elif os.path.isfile(filepath):
             if filepath.endswith(".c") == True or filepath.endswith(".h") == True: #只扫描.c.h文件
-                change_indent_to_spaces(filepath,encode)
+                format_codes(filepath,encode)
 
 if __name__ == '__main__':
     workpath = input('enter work path: ')
