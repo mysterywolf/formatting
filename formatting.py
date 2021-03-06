@@ -83,9 +83,9 @@ def get_encode_info(file):
         encoding = encode_info['encoding']
         confidence = encode_info['confidence']
 
-        #对编码的判断可靠性小于85%不予以处理,需要人工处理;但是如果是Windows-1252或者utf-8可靠性小于85%依然进行处理
+        #对编码的判断可靠性小于85%不予以处理,需要人工介入处理;但是如果是Windows-1252或者utf-8可靠性小于85%依然进行处理
         # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
-        if (confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8')): 
+        if confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8'): 
             if encoding != None:
                 print('未处理，需人工确认：'+encoding+':'+file) #需要人工确认
                 print(encode_info)
@@ -95,25 +95,28 @@ def get_encode_info(file):
 
 #将单个文件转为UTF-8编码
 def convert_to_utf_8 (path):
-    try: 
-        info = get_encode_info(path)
-        if info == None:
-            return 0 #0 失败
+        encoding = get_encode_info(path)
+        if encoding == None:
+            return False #转换失败
 
-        file=open(path,'rb+')
-        data = file.read()
-        string = data.decode(info)
-        utf = string.encode('utf-8')
-        file.seek(0)
-        file.write(utf)
-        file.close()
-        return 1 #1成功
-    except UnicodeDecodeError:
-        print("UnicodeDecodeError报错，未处理，需人工确认"+path)
-        return 0
-    except UnicodeEncodeError:
-        print("UnicodeEncodeError报错，未处理，需人工确认"+path)
-        return 0
+        if encoding == 'utf-8': #若检测到编码为UTF-8则直接返回成功
+            return True
+        else:
+            try: 
+                file=open(path,'rb+')
+                data = file.read()
+                string = data.decode(encoding)
+                utf = string.encode('utf-8')
+                file.seek(0)
+                file.write(utf)
+                file.close()
+                return True #转换成功
+            except UnicodeDecodeError:
+                print("解码失败，该文件处理失败"+path)
+                return False
+            except UnicodeEncodeError:
+                print("编码失败，该文件处理失败"+path)
+                return False
 
 # 递归扫描目录下的所有文件
 def traversalallfile(path):
@@ -123,8 +126,9 @@ def traversalallfile(path):
         if os.path.isdir(filepath):
             traversalallfile(filepath)
         elif os.path.isfile(filepath):
-            if filepath.endswith(".c") == True or filepath.endswith(".h") == True: #只处理.c和.h文件
-                if convert_to_utf_8(filepath) == 1: #先把这个文件转为UTF-8编码,1成功
+            if filepath.endswith(".c") == True or filepath.endswith(".h") == True:
+                #若为.c/.h文件，则开始进行处理
+                if convert_to_utf_8(filepath) == True: #先把这个文件转为UTF-8编码
                     format_codes(filepath) #再对这个文件进行格式整理
 
 def formatfiles():
