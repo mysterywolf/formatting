@@ -14,6 +14,10 @@
 
 
 
+教学视频：https://www.bilibili.com/video/BV1XN411Q7n3
+
+
+
 不要忘记先安装依赖软件包：
 
 ```shell
