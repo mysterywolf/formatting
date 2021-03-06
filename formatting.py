@@ -64,37 +64,37 @@ def formattail(line):
 
 #对单个文件进行格式整理
 def format_codes(filename):
-    try:
-        file=open(filename,'r',encoding = 'utf-8')
-        file_temp=open('temp','w',encoding = 'utf-8')
-        for line in file:
-            line = tab2spaces(line)
-            line = formattail(line)
-            file_temp.write(line)
-        file_temp.close()
-        file.close()
-        os.remove(filename)
-        os.rename('temp',filename)
+    file=open(filename,'r',encoding = 'utf-8')
+    file_temp=open('temp','w',encoding = 'utf-8')
+    for line in file:
+        line = tab2spaces(line)
+        line = formattail(line)
+        file_temp.write(line)
+    file_temp.close()
+    file.close()
+    os.remove(filename)
+    os.rename('temp',filename)
+
 
 def get_encode_info(file):
+    encoding = None
     with open(file, 'rb') as f:
-        code = chardet.detect(f.read())['encoding']       
-        #charde库有一定几率对当前文件的编码识别不准确        
-        if code == 'EUC-JP': #容易将含着少量中文的英文字符文档识别为日语编码格式
-            code = 'GB2312'
-        elif code == 'ISO-8859-1': #部分文件GB2312码会被识别成ISO-8859-1
-            code = 'GB2312'
+        encode_info = chardet.detect(f.read())
+        encoding = encode_info['encoding']
+        confidence = encode_info['confidence']
 
-        if not (code == 'ascii' or code == 'utf-8' or code == 'GB2312' #编码识别正确
-                or code == 'Windows-1252'): # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
-            if code != None:
-                print('未处理，需人工确认：'+code+':'+file) #需要人工确认
-                code = None
+        #对编码的判断可靠性小于85%不予以处理,需要人工处理;但是如果是Windows-1252或者utf-8可靠性小于85%依然进行处理
+        # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
+        if (confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8')): 
+            if encoding != None:
+                print('未处理，需人工确认：'+encoding+':'+file) #需要人工确认
+                print(encode_info)
+                encoding = None
 
-        return code
+    return encoding
 
 #将单个文件转为UTF-8编码
-def conver_to_utf_8 (path):
+def convert_to_utf_8 (path):
     try: 
         info = get_encode_info(path)
         if info == None:
@@ -109,10 +109,10 @@ def conver_to_utf_8 (path):
         file.close()
         return 1 #1成功
     except UnicodeDecodeError:
-        print("UnicodeDecodeError未处理，需人工确认"+path)
+        print("UnicodeDecodeError报错，未处理，需人工确认"+path)
         return 0
     except UnicodeEncodeError:
-        print("UnicodeEncodeError未处理，需人工确认"+path)
+        print("UnicodeEncodeError报错，未处理，需人工确认"+path)
         return 0
 
 # 递归扫描目录下的所有文件
@@ -124,7 +124,7 @@ def traversalallfile(path):
             traversalallfile(filepath)
         elif os.path.isfile(filepath):
             if filepath.endswith(".c") == True or filepath.endswith(".h") == True: #只处理.c和.h文件
-                if conver_to_utf_8(filepath) == 1: #先把这个文件转为UTF-8编码,1成功
+                if convert_to_utf_8(filepath) == 1: #先把这个文件转为UTF-8编码,1成功
                     format_codes(filepath) #再对这个文件进行格式整理
 
 def formatfiles():
