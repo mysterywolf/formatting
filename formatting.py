@@ -154,8 +154,11 @@ def traversalallfile(path):
         if os.path.isdir(filepath):
             traversalallfile(filepath)
         elif os.path.isfile(filepath):
-            if filepath.endswith(".c") == True or filepath.endswith(".h") == True:
-                # 若为.c/.h文件，则开始进行处理
+            if filepath.endswith(".c") == True or \
+               filepath.endswith(".cpp") == True or \
+               filepath.endswith(".h") == True or \
+               filepath.endswith(".py") == True:
+                # 若为.c/.h/.cpp/.py文件，则开始进行处理
                 if convert_to_utf_8(filepath) == True:  # 先把这个文件转为UTF-8编码
                     format_codes(filepath)  # 再对这个文件进行格式整理
 
