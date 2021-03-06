@@ -21,6 +21,7 @@
 # Date           Author       Notes
 # 2021-03-02     Meco Man     The first version
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
+# 2021-03-06     Meco Man     增加人工介入处理交互界面
 
 
 #本文件会自动对指定路径下的所有文件包括子文件夹的文件（仅针对.c.h）进行扫描
