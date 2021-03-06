@@ -1,7 +1,7 @@
 #
 # File      : formatting.py
 # This file is part of RT-Thread RTOS
-# COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+# COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -64,17 +64,25 @@ def formattail(line):
 
 #对单个文件进行格式整理
 def format_codes(filename):
-    file=open(filename,'r',encoding = 'utf-8')
-    file_temp=open('temp','w',encoding = 'utf-8')
-    for line in file:
-        line = tab2spaces(line)
-        line = formattail(line)
-        file_temp.write(line)
-    file_temp.close()
-    file.close()
-    os.remove(filename)
-    os.rename('temp',filename)
-
+    try: 
+        file=open(filename,'r',encoding = 'utf-8')
+        file_temp=open('temp','w',encoding = 'utf-8')
+        for line in file:
+            line = tab2spaces(line)
+            line = formattail(line)
+            file_temp.write(line)
+        file_temp.close()
+        file.close()
+        os.remove(filename)
+        os.rename('temp',filename)
+    except UnicodeDecodeError:
+        print("解码失败，该文件处理失败"+filename)
+        file_temp.close()
+        file.close()
+    except UnicodeEncodeError:
+        print("编码失败，该文件处理失败"+filename)
+        file_temp.close()
+        file.close()
 
 def get_encode_info(file):
     encoding = None
@@ -87,10 +95,21 @@ def get_encode_info(file):
         # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
         if confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8'): 
             if encoding != None:
-                print('未处理，需人工确认：'+encoding+':'+file) #需要人工确认
+                print('--------------------------------------------------------------------------')
+                print('未处理，需人工确认: '+encoding+': '+file) #需要人工确认
+                print('自动判断结果仅供参考:')
                 print(encode_info)
-                encoding = None
-
+                man_result = input('1.GB2312\n2.Windows-1252\n3.others\n4.略过本文件\n请输入人工研判结果: ')
+                if man_result == '1':
+                    encoding = 'GB2312'
+                elif man_result == '2':
+                    encoding == 'Windows-1252'
+                elif man_result == '3':
+                    encoding = input('请输入编码类型: ')
+                elif man_result == '4':
+                    print('本文件略过,继续处理其他文件...')
+                else:
+                    print('输入参数无效,本文件略过,继续处理其他文件...')
     return encoding
 
 #将单个文件转为UTF-8编码
