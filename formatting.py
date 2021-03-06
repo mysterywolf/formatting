@@ -17,11 +17,13 @@
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
+# https://www.github.com/mysterywolf/formatting
+# 
 # Change Logs:
 # Date           Author       Notes
 # 2021-03-02     Meco Man     The first version
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
-# 2021-03-06     Meco Man     增加人工介入处理交互界面
+# 2021-03-06     Meco Man     增加人工介入处理交互功能
 
 
 #本文件会自动对指定路径下的所有文件包括子文件夹的文件（仅针对.c.h）进行扫描
@@ -46,13 +48,13 @@ def tab2spaces(line):
     while i > 0:
         ptr = list_str.index('\t')
         del list_str[ptr]
-        space_need_to_insert = 4 - (ptr%4)
+        space_need_to_insert = 4 - (ptr % 4)
         j = 0
         while j < space_need_to_insert:
             list_str.insert(ptr,' ')
-            j = j+1
+            j = j + 1
         
-        i = i-1
+        i = i - 1
 
     line = ''.join(list_str) #列表恢复成字符串
     return line
@@ -93,7 +95,7 @@ def get_encode_info(file):
         confidence = encode_info['confidence']
 
         #对编码的判断可靠性小于85%不予以处理,需要人工介入处理;但是如果是Windows-1252或者utf-8可靠性小于85%依然进行处理
-        # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
+        #Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
         if confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8'): 
             if encoding != None:
                 print('--------------------------------------------------------------------------')
@@ -152,7 +154,7 @@ def traversalallfile(path):
                     format_codes(filepath) #再对这个文件进行格式整理
 
 def formatfiles():
-    workpath = input('enter work path: ')
+    workpath = input('请输入扫描路径: ')
     traversalallfile(workpath)
 
 if __name__ == '__main__':
