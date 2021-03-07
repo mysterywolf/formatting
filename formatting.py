@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*- 
+
 #
 # File      : formatting.py
 # This file is part of RT-Thread RTOS
@@ -24,20 +26,23 @@
 # 2021-03-02     Meco Man     The first version
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
 # 2021-03-06     Meco Man     增加人工介入处理交互功能
+# 2021-03-07     Meco Man     增加将RT-Thread版权信息的截至年份修改至今年功能
 
 
-# 本文件会自动对指定路径下的所有文件包括子文件夹的文件（仅针对.c.h）进行扫描
-#   1)将源文件编码统一为UTF-8;
-#   2)将TAB键替换为空格;
-#   3)将每行末尾多余的空格删除，并统一换行符为'\n'; 
+# 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
+#   1)将源文件编码统一为UTF-8
+#   2)将TAB键替换为空格
+#   3)将每行末尾多余的空格删除，并统一换行符为'\n'
+#   4)将RT-Thread版权信息的截至年份修改至今年
 # 使用时只需要双击本文件，输入要扫描的文件夹路径即可
 # 不能保证100%全部成功转换为UTF-8，有一些编码特殊或识别不准确会在终端打印信息，需人工转换
 
 # 欢迎对本文件的功能继续做出补充，欢迎提交PR
 
 import os
+import re
 import chardet
-
+import datetime
 
 # 用空格代替TAB键
 # 这里并不是简单的将TAB替换成4个空格
@@ -67,15 +72,30 @@ def formattail(line):
     line = line + '\n'
     return line
 
+#搜索版权信息的截至年份修改至今年
+def change_copyright_year(line):
+    search_result = re.search('2006-20[0-9][0-9]', line, flags=0) # 搜索2006-20xx字样
+    if search_result != None:
+        if re.search('RT-Thread', line, flags=0) != None: # 同时可以在本行中搜索到‘RT-Thread’字样
+            end = search_result.end()
+            str_year = str(datetime.datetime.now().year)
+            line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
+    return line
 
 # 对单个文件进行格式整理
 def format_codes(filename):
     try:
         file = open(filename, 'r', encoding='utf-8')
         file_temp = open('temp', 'w', encoding='utf-8')
+        line_num = 0
         for line in file:
             line = tab2spaces(line)
             line = formattail(line)
+
+            line_num = line_num + 1
+            if line_num < 20: #文件前20行对版权头注释进行扫描，找到截至年份并修改至今年
+                line = change_copyright_year(line)
+
             file_temp.write(line)
         file_temp.close()
         file.close()
@@ -128,22 +148,22 @@ def convert_to_utf_8(path):
 
     if encoding == 'utf-8':  # 若检测到编码为UTF-8则直接返回成功
         return True
-    else:
-        try:
-            file = open(path, 'rb+')
-            data = file.read()
-            string = data.decode(encoding)
-            utf = string.encode('utf-8')
-            file.seek(0)
-            file.write(utf)
-            file.close()
-            return True  # 转换成功
-        except UnicodeDecodeError:
-            print("解码失败，该文件处理失败" + path)
-            return False
-        except UnicodeEncodeError:
-            print("编码失败，该文件处理失败" + path)
-            return False
+
+    try:
+        file = open(path, 'rb+')
+        data = file.read()
+        string = data.decode(encoding)
+        utf = string.encode('utf-8')
+        file.seek(0)
+        file.write(utf)
+        file.close()
+        return True  # 转换成功
+    except UnicodeDecodeError:
+        print("解码失败，该文件处理失败" + path)
+        return False
+    except UnicodeEncodeError:
+        print("编码失败，该文件处理失败" + path)
+        return False
 
 
 # 递归扫描目录下的所有文件
@@ -156,9 +176,8 @@ def traversalallfile(path):
         elif os.path.isfile(filepath):
             if filepath.endswith(".c") == True or \
                filepath.endswith(".cpp") == True or \
-               filepath.endswith(".h") == True or \
-               filepath.endswith(".py") == True:
-                # 若为.c/.h/.cpp/.py文件，则开始进行处理
+               filepath.endswith(".h") == True:
+                # 若为.c/.h/.cpp文件，则开始进行处理
                 if convert_to_utf_8(filepath) == True:  # 先把这个文件转为UTF-8编码
                     format_codes(filepath)  # 再对这个文件进行格式整理
 
