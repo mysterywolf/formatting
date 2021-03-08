@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*- 
 
-#
 # File      : formatting.py
 # This file is part of RT-Thread RTOS
 # COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
@@ -27,7 +26,6 @@
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
 # 2021-03-06     Meco Man     增加人工介入处理交互功能
 # 2021-03-07     Meco Man     增加将RT-Thread版权信息的截至年份修改至今年功能
-
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
 #   1)将源文件编码统一为UTF-8
