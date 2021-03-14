@@ -26,12 +26,14 @@
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
 # 2021-03-06     Meco Man     增加人工介入处理交互功能
 # 2021-03-07     Meco Man     增加将RT-Thread版权信息的截至年份修改至今年功能
+# 2021-03-14     Meco Man     增加将上海睿赛德版权信息的截至年份修改至今年功能
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
 #   1)将源文件编码统一为UTF-8
 #   2)将TAB键替换为空格
 #   3)将每行末尾多余的空格删除，并统一换行符为'\n'
 #   4)将RT-Thread版权信息的截至年份修改至今年
+#   5)将上海睿赛德版权信息的截至年份修改至今年
 # 使用时只需要双击本文件，输入要扫描的文件夹路径即可
 # 不能保证100%全部成功转换为UTF-8，有一些编码特殊或识别不准确会在终端打印信息，需人工转换
 
@@ -70,11 +72,21 @@ def formattail(line):
     line = line + '\n'
     return line
 
-#搜索版权信息的截至年份修改至今年
-def change_copyright_year(line):
-    search_result = re.search('2006-20[0-9][0-9]', line, flags=0) # 搜索2006-20xx字样
+#搜索RT-Thread版权信息的截至年份修改至今年
+def change_rtthread_copyright_year(line):
+    search_result = re.search('200[0-9]-20[0-9][0-9]', line, flags=0) # 搜索200x-20xx字样
     if search_result != None:
         if re.search('RT-Thread', line, flags=0) != None: # 同时可以在本行中搜索到‘RT-Thread’字样
+            end = search_result.end()
+            str_year = str(datetime.datetime.now().year)
+            line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
+    return line
+
+#搜索Real-Thread睿赛德版权信息的截至年份修改至今年
+def change_realthread_copyright_year(line):
+    search_result = re.search('20[0-9][0-9]-20[0-9][0-9]', line, flags=0) # 搜索20xx-20xx字样
+    if search_result != None:
+        if re.search('Real-Thread', line, flags=0) != None: # 同时可以在本行中搜索到‘Real-Thread’字样
             end = search_result.end()
             str_year = str(datetime.datetime.now().year)
             line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
@@ -92,7 +104,8 @@ def format_codes(filename):
 
             line_num = line_num + 1
             if line_num < 20: #文件前20行对版权头注释进行扫描，找到截至年份并修改至今年
-                line = change_copyright_year(line)
+                line = change_rtthread_copyright_year(line)
+                line = change_realthread_copyright_year(line)
 
             file_temp.write(line)
         file_temp.close()
