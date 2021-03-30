@@ -48,7 +48,7 @@ import datetime
 # 这里并不是简单的将TAB替换成4个空格
 # 空格个数到底是多少需要计算，因为TAB制表本身有自动对齐的功能
 def tab2spaces(line):
-    list_str = list(line)  # 字符串打散成列表，放边操作
+    list_str = list(line)  # 字符串打散成列表，方便操作
     i = list_str.count('\t')
 
     while i > 0:
@@ -129,9 +129,9 @@ def get_encode_info(file):
         encoding = encode_info['encoding']
         confidence = encode_info['confidence']
 
-        # 对编码的判断可靠性小于85%不予以处理,需要人工介入处理;但是如果是Windows-1252或者utf-8可靠性小于85%依然进行处理
+        # 对编码的判断可靠性小于90%不予以处理,需要人工介入处理;但是如果是Windows-1252或者utf-8可靠性小于90%依然进行处理
         # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
-        if confidence < 0.85 and not (encoding == 'Windows-1252' or encoding == 'utf-8'):
+        if confidence < 0.90 and not (encoding == 'Windows-1252' or encoding == 'utf-8'):
             if encoding != None:
                 print('--------------------------------------------------------------------------')
                 print('未处理，需人工确认: ' + encoding + ': ' + file)  # 需要人工确认
