@@ -129,9 +129,8 @@ def get_encode_info(file):
         encoding = encode_info['encoding']
         confidence = encode_info['confidence']
 
-        # 对编码的判断可靠性小于90%不予以处理,需要人工介入处理;但是如果是Windows-1252或者utf-8可靠性小于90%依然进行处理
-        # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
-        if confidence < 0.90 and not (encoding == 'Windows-1252' or encoding == 'utf-8'):
+        # 对编码的判断可靠性小于90%不予以处理,需要人工介入处理
+        if confidence < 0.90:
             if encoding != None:
                 print('--------------------------------------------------------------------------')
                 print('未处理，需人工确认: ' + encoding + ': ' + file)  # 需要人工确认
@@ -146,6 +145,7 @@ def get_encode_info(file):
                     encoding = input('请输入编码类型: ')
                 elif man_result == '4':
                     print('本文件略过,继续处理其他文件...')
+                    encoding = None
                 else:
                     print('输入参数无效,本文件略过,继续处理其他文件...')
     return encoding
@@ -157,7 +157,7 @@ def convert_to_utf_8(path):
     if encoding == None:
         return False  # 转换失败
 
-    if encoding == 'utf-8':  # 若检测到编码为UTF-8则直接返回成功
+    if encoding == 'utf-8': # 若检测到编码为UTF-8则直接返回成功
         return True
 
     try:
