@@ -27,6 +27,7 @@
 # 2021-03-06     Meco Man     增加人工介入处理交互功能
 # 2021-03-07     Meco Man     增加将RT-Thread版权信息的截至年份修改至今年功能
 # 2021-03-14     Meco Man     增加将上海睿赛德版权信息的截至年份修改至今年功能
+# 2021-06-07     iysheng      Add support with format single file and parse command line parameters
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -40,6 +41,7 @@
 # 欢迎对本文件的功能继续做出补充，欢迎提交PR
 
 import os
+import sys
 import re
 import chardet
 import datetime
@@ -176,6 +178,10 @@ def convert_to_utf_8(path):
         print("编码失败，该文件处理失败" + path)
         return False
 
+def formatfile(file):
+    if file.endswith(".c") == True or file.endswith(".h") == True: #只处理.c和.h文件
+        if convert_to_utf_8(file) == True: #先把这个文件转为UTF-8编码,1成功
+            format_codes(file) #再对这个文件进行格式整理
 
 # 递归扫描目录下的所有文件
 def traversalallfile(path):
@@ -185,18 +191,18 @@ def traversalallfile(path):
         if os.path.isdir(filepath):
             traversalallfile(filepath)
         elif os.path.isfile(filepath):
-            if filepath.endswith(".c") == True or \
-               filepath.endswith(".cpp") == True or \
-               filepath.endswith(".h") == True:
-                # 若为.c/.h/.cpp文件，则开始进行处理
-                if convert_to_utf_8(filepath) == True:  # 先把这个文件转为UTF-8编码
-                    format_codes(filepath)  # 再对这个文件进行格式整理
-
+            formatfile(filepath)
 
 def formatfiles():
-    workpath = input('请输入扫描路径: ')
-    traversalallfile(workpath)
+    if len(sys.argv) > 1:
+        worktarget = sys.argv[1] # use the first command line parameter as worktarget
+    else:
+        worktarget = input('Please enter work path or file to format: ')
 
+    if os.path.isdir(worktarget):
+        traversalallfile(worktarget)
+    else:
+        formatfile(worktarget)
 
 if __name__ == '__main__':
     formatfiles()
