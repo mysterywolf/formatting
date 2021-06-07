@@ -179,7 +179,7 @@ def convert_to_utf_8(path):
         return False
 
 def formatfile(file):
-    if file.endswith(".c") == True or file.endswith(".h") == True: #只处理.c和.h文件
+    if file.endswith(".c") == True or file.endswith(".h") or file.endswith(".cpp") == True: #只处理.c/.h/.cpp文件
         if convert_to_utf_8(file) == True: #先把这个文件转为UTF-8编码,1成功
             format_codes(file) #再对这个文件进行格式整理
 
