@@ -13,18 +13,16 @@
 - 将RT-Thread版权信息的截至年份修改至今年(若文件不涉及此问题，程序会自动忽略)
 - 将上海睿赛德版权信息的截至年份修改至今年(若文件不涉及此问题，程序会自动忽略)
 
-
-使用时只需要运行formatting.py脚本，输入要扫描的文件夹路径即可。
-
-
-
-教学视频：https://www.bilibili.com/video/BV1XN411Q7n3
-
-
-
-不要忘记先安装依赖软件包：
+## 安装依赖库
 
 ```shell
 pip install -r requirements.txt
 ```
 
+## 使用方法
+
+可以通过VS Code等软件，直接打开 `formatting.py` 文件，输入要扫描的文件夹目录或者具体的某个文件，即可运行。
+
+或者，可以通过命令行的方式指定扫描的文件夹目录或者具体的某个文件。
+
+教学视频：https://www.bilibili.com/video/BV1XN411Q7n3
