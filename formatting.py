@@ -136,16 +136,18 @@ def get_encode_info(file):
             if encoding != None:
                 print('--------------------------------------------------------------------------')
                 print('未处理，需人工确认: ' + encoding + ': ' + file)  # 需要人工确认
-                print('自动判断结果仅供参考:')
+                print('自动判读结果仅供参考:')
                 print(encode_info)
-                man_result = input('1.GB2312\n2.Windows-1252\n3.手动输入其他类型编码\n4.略过本文件\n请输入人工研判结果: ')
+                man_result = input('1.GB2312\n2.Windows-1252\n3.utf-8\n4.手动输入其他类型编码\n5.略过本文件\n请输入人工研判结果: ')
                 if man_result == '1':
                     encoding = 'GB2312'
                 elif man_result == '2':
                     encoding == 'Windows-1252'
                 elif man_result == '3':
-                    encoding = input('请输入编码类型: ')
+                    encoding == 'utf-8'
                 elif man_result == '4':
+                    encoding = input('请输入编码类型: ')
+                elif man_result == '5':
                     print('本文件略过,继续处理其他文件...')
                     encoding = None
                 else:
