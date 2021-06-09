@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*- 
 
 # File      : formatting.py
-# This file is part of RT-Thread RTOS
-# COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
+# COPYRIGHT (C) 2021, Meco Jianting Man <jiantingman@foxmail.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
