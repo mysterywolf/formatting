@@ -39,7 +39,7 @@ Please enter work path or file to format: test_dir
 ```
 
 ### 注意
-请将 formatting.py 脚本和带格式整理的工程放在同一个盘符下。
+请将 formatting.py 脚本和待格式整理的工程放在同一个盘符下。
 
 
 ### 教学视频
