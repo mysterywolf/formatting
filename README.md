@@ -38,6 +38,10 @@ Please enter work path or file to format: test_dir
 ▸ python formatting.py [dir/file_name]
 ```
 
+### 注意
+请将 formatting.py 脚本和带格式整理的工程放在同一个盘符下。
+
+
 ### 教学视频
 
 > https://www.bilibili.com/video/BV1XN411Q7n3
