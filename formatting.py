@@ -96,8 +96,11 @@ def change_realthread_copyright_year(line):
 # 对单个文件进行格式整理
 def format_codes(filename):
     try:
+        filepath = os.path.dirname(filename)
+        # 将temp_file放在和filename相同的路径下
+        temp_file = filepath + "temp"
         file = open(filename, 'r', encoding='utf-8')
-        file_temp = open('temp', 'w', encoding='utf-8')
+        file_temp = open(temp_file, 'w', encoding='utf-8')
         line_num = 0
         for line in file:
             line = tab2spaces(line)
@@ -112,7 +115,7 @@ def format_codes(filename):
         file_temp.close()
         file.close()
         os.remove(filename)
-        os.rename('temp', filename)
+        os.rename(temp_file, filename)
     except UnicodeDecodeError:
         print("解码失败，该文件处理失败" + filename)
         file_temp.close()
