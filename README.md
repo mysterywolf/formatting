@@ -42,3 +42,8 @@ Please enter work path or file to format: test_dir
 
 > https://www.bilibili.com/video/BV1XN411Q7n3
 
+
+
+## 使用协议
+
+本软件可以自由使用，无论是个人目的还是商业目的，但是发现本脚本有任何问题，请提PR协助修复，本人对本软件造成的后果不承担任何责任，使用本软件即表示您清楚地理解本协议的内容。
