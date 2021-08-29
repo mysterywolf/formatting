@@ -12,8 +12,9 @@
 # 2021-03-14     Meco Man     增加将上海睿赛德版权信息的截至年份修改至今年功能
 # 2021-06-07     iysheng      Add support with format single file and parse command line parameters
 # 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
+# 2021-08-29     Meco Man     优化文件后缀名的判断
 
-# 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
+# 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
 #   2)将TAB键替换为空格
 #   3)将每行末尾多余的空格删除，并统一换行符为'\n'
@@ -168,7 +169,7 @@ def convert_to_utf_8(path):
         return False
 
 def formatfile(file):
-    if file.endswith(".c") == True or file.endswith(".h") or file.endswith(".cpp") == True: #只处理.c/.h/.cpp文件
+    if os.path.splitext(file)[1] in ['.c', '.h', '.cpp', '.hpp']:#只处理.c/.h/.cpp/.hpp文件
         if convert_to_utf_8(file) == True: #先把这个文件转为UTF-8编码,1成功
             format_codes(file) #再对这个文件进行格式整理
 
