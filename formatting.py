@@ -11,6 +11,7 @@
 # 2021-03-07     Meco Man     增加将RT-Thread版权信息的截至年份修改至今年功能
 # 2021-03-14     Meco Man     增加将上海睿赛德版权信息的截至年份修改至今年功能
 # 2021-06-07     iysheng      Add support with format single file and parse command line parameters
+# 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp）进行扫描
 #   1)将源文件编码统一为UTF-8
