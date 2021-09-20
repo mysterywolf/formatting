@@ -1,8 +1,9 @@
 #!/bin/python
 # -*- coding: UTF-8 -*- 
 
-# File      : formatting.py
 # COPYRIGHT (C) 2021, Meco Jianting Man <jiantingman@foxmail.com>
+#
+# SPDX-License-Identifier: MIT License
 #
 # Change Logs:
 # Date           Author       Notes
