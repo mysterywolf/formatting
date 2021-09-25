@@ -38,6 +38,11 @@ Please enter work path or file to format: test_dir
 ▸ python formatting.py [dir/file_name]
 ```
 
+或者直接在 linux 下以类似 `./command` 方式直接运行该脚本
+``` shell
+▸ ./formatting.py [dir/file_name]
+```
+
 ### 教学视频
 
 > https://www.bilibili.com/video/BV1XN411Q7n3
