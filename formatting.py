@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*- 
 
 # COPYRIGHT (C) 2021, Meco Jianting Man <jiantingman@foxmail.com>
