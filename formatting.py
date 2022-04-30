@@ -172,7 +172,7 @@ def convert_to_utf_8(path):
 def formatfile(file):
     if os.path.splitext(file)[1] in ['.c', '.h', '.cpp', '.hpp']: #处理.c/.h/.cpp/.hpp文件
     # if os.path.splitext(file)[1] in ['.md']: #处理markdown文档
-    # if os.path.split(file)[1] in ['Kconfig', 'SConscript']: #处理Kconfig Sconscript
+    # if os.path.split(file)[1] in ['Kconfig', 'SConscript', 'SConstruct']: #处理Kconfig Sconscript
     # if os.path.splitext(file)[1] in ['.json']: #处理.json文件
         if convert_to_utf_8(file) == True: #先把这个文件转为UTF-8编码,1成功
             format_codes(file) #再对这个文件进行格式整理
