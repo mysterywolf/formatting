@@ -124,10 +124,10 @@ def get_encode_info(file):
         if confidence < 0.90:
             if encoding != None:
                 print('--------------------------------------------------------------------------')
-                print('未处理，需人工确认: ' + encoding + ': ' + file)  # 需要人工确认
+                print('未处理，需人工确认(Unprocessed, manual confirmation is required): ' + encoding + ': ' + file)  # 需要人工确认
                 print('自动判读结果仅供参考:')
                 print(encode_info)
-                man_result = input('1.GB2312\n2.Windows-1252\n3.utf-8\n4.手动输入其他类型编码\n5.略过本文件\n请输入人工研判结果: ')
+                man_result = input('1.GB2312\n2.Windows-1252\n3.utf-8\n4.手动输入其他类型编码(Manually enter other type codes)\n5.略过本文件(skip this document)\n请输入人工研判结果(Please enter the manual judgment result): ')
                 if man_result == '1':
                     encoding = 'GB2312'
                 elif man_result == '2':
@@ -135,12 +135,12 @@ def get_encode_info(file):
                 elif man_result == '3':
                     encoding == 'utf-8'
                 elif man_result == '4':
-                    encoding = input('请输入编码类型: ')
+                    encoding = input('请输入编码类型(Please enter code type): ')
                 elif man_result == '5':
-                    print('本文件略过,继续处理其他文件...')
+                    print('本文件略过,继续处理其他文件(Skip this document and continue processing other documents)...')
                     encoding = None
                 else:
-                    print('输入参数无效,本文件略过,继续处理其他文件...')
+                    print('输入参数无效,本文件略过,继续处理其他文件(The input parameters are invalid, skip this file and continue to process other files)...')
     return encoding
 
 
