@@ -16,9 +16,12 @@
 
 ## 安装依赖软件包
 
-```shell
-pip install -r requirements.txt
-```
+1. python3
+
+2.
+  ```shell
+  pip install -r requirements.txt
+  ```
 
 ## 使用方法
 
