@@ -41,6 +41,8 @@ Please enter work path or file to format: test_dir
 ▸ python formatting.py [dir/file_name]
 ```
 
+> [] 表示内容是可选的
+
 ### 教学视频
 
 > https://www.bilibili.com/video/BV1XN411Q7n3
