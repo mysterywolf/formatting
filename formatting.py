@@ -160,6 +160,7 @@ def convert_to_utf_8(path):
         utf = string.encode('utf-8')
         file.seek(0)
         file.write(utf)
+        file.truncate()
         file.close()
         return True  # 转换成功
     except UnicodeDecodeError:
