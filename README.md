@@ -47,7 +47,14 @@ Please enter work path or file to format: test_dir
 
 > https://www.bilibili.com/video/BV1XN411Q7n3
 
+### 注意
 
+建议git的换行转换设置为：
+
+``` shell
+git config --global core.autocrlf input
+git config --global core.safecrlf false
+```
 
 ## 使用协议
 
