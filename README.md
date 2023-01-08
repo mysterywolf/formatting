@@ -54,6 +54,7 @@ Please enter work path or file to format: test_dir
 ``` shell
 git config --global core.autocrlf input
 git config --global core.safecrlf false
+git config --global core.filemode false
 ```
 
 ## 使用协议
