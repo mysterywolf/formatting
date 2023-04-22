@@ -31,6 +31,7 @@ import sys
 import re
 import chardet
 import datetime
+import filecmp
 
 # 用空格代替TAB键
 # 这里并不是简单的将TAB替换成4个空格
@@ -80,19 +81,15 @@ def change_realthread_copyright_year(line):
             line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
     return line
 
-# 对单个文件进行格式整理
-def format_codes(filename):
+def format_copyright_year(filename):
     try:
-        filepath = os.path.dirname(filename)
-        # 将temp_file放在和filename相同的路径下
-        temp_file = filepath + "temp"
-        file = open(filename, 'r', encoding='utf-8')
+        file = open(filename, 'r', encoding = 'utf-8')
+
+        temp_file = os.path.join(os.path.dirname(filename), "temp")
         file_temp = open(temp_file, 'w', encoding='utf-8')
+
         line_num = 0
         for line in file:
-            line = tab2spaces(line)
-            line = formattail(line)
-
             line_num = line_num + 1
             if line_num < 20: #文件前20行对版权头注释进行扫描，找到截至年份并修改至今年
                 line = change_rtthread_copyright_year(line)
@@ -103,6 +100,41 @@ def format_codes(filename):
         file.close()
         os.remove(filename)
         os.rename(temp_file, filename)
+
+    except UnicodeDecodeError:
+        print("解码失败，该文件处理失败" + filename)
+        file_temp.close()
+        file.close()
+    except UnicodeEncodeError:
+        print("编码失败，该文件处理失败" + filename)
+        file_temp.close()
+        file.close()
+
+# 对单个文件进行格式整理
+def format_codes(filename):
+    try:
+        filepath = os.path.dirname(filename)
+        # 将temp_file放在和filename相同的路径下
+        temp_file = filepath + "temp"
+        file = open(filename, 'r', encoding='utf-8')
+        file_temp = open(temp_file, 'w', encoding='utf-8')
+
+        for line in file:
+            line = tab2spaces(line)
+            line = formattail(line)
+
+            file_temp.write(line)
+        file_temp.close()
+        file.close()
+
+        if filecmp.cmp(filename, temp_file):
+            os.remove(temp_file) # same file, no modification
+        else:
+            os.remove(filename)
+            os.rename(temp_file, filename)
+
+            format_copyright_year(filename) # re-format for copyright year information
+
     except UnicodeDecodeError:
         print("解码失败，该文件处理失败" + filename)
         file_temp.close()
