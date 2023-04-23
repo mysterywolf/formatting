@@ -1,10 +1,10 @@
-name: Check File Format and License
+name: action
 
 on: [pull_request]
 
 jobs:
   scancode_job:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     name: Scan code format and license
     steps:
       - uses: actions/checkout@v3
@@ -18,4 +18,31 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install pyinstaller
+          choco install zip
           pyinstaller --onefile --nowindowed formatting.py
+          ls -la
+          ls -la dist
+          Compress-Archive -Path dist/formatting.exe -DestinationPath formatting.zip # Use Compress-Archive to create the zip file
+          ls -la
+      - name: Create Github release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number}}
+          release_name: Release ${{github.run_number}}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: formatting.zip
+          path: formatting.zip
+      - name: Upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: formatting.zip
+          asset_name: formatting.zip
+
