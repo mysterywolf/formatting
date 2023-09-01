@@ -43,6 +43,10 @@ Please enter work path or file to format: test_dir
 
 > [] 表示内容是可选的
 
+### 指定文件禁用formatting
+
+可以通过在源文件中添加`formatting:disable`字符串，即可使`formatting`跳过对该文件的处理。
+
 ### 教学视频
 
 > https://www.bilibili.com/video/BV1XN411Q7n3

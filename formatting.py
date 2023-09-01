@@ -15,6 +15,7 @@
 # 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
 # 2021-08-29     Meco Man     优化文件后缀名的判断
 # 2023-04-24     BernardXiong 仅当文件有修改时才更新copyright year信息
+# 2023-09-01     smartmx      文件中有"formatting:disable"禁用指示时，则不再处理该文件
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -62,6 +63,13 @@ def formattail(line):
     line = line + '\n'
     return line
 
+# 获取当前文件是否准许使用formatting格式化
+def get_formatting_disable_state(string):
+    search_result = re.search('formatting:disable', string, flags=0)
+    if search_result != None:
+        return True
+    return False
+    
 #搜索RT-Thread版权信息的截至年份修改至今年
 def change_rtthread_copyright_year(line):
     search_result = re.search('200[0-9]-20[0-9][0-9]', line, flags=0) # 搜索200x-20xx字样
@@ -182,14 +190,18 @@ def convert_to_utf_8(path):
     encoding = get_encode_info(path)
     if encoding == None:
         return False  # 转换失败
-
-    if encoding == 'utf-8': # 若检测到编码为UTF-8则直接返回成功
-        return True
-
     try:
         file = open(path, 'rb+')
         data = file.read()
         string = data.decode(encoding)
+        disable_state = get_formatting_disable_state(string)
+        if disable_state == True:
+            print('本文件禁止使用formatting，无需转换：' + path)
+            file.close()
+            return True
+        if encoding == 'utf-8': # 若检测到编码为UTF-8则直接返回成功
+            file.close()
+            return True
         utf = string.encode('utf-8')
         file.seek(0)
         file.write(utf)
