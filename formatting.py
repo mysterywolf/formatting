@@ -196,9 +196,9 @@ def convert_to_utf_8(path):
         string = data.decode(encoding)
         disable_state = get_formatting_disable_state(string)
         if disable_state == True:
-            print('本文件禁止使用formatting，无需转换：' + path)
+            print('文件禁止使用formatting，无需转换：' + path)
             file.close()
-            return True
+            return False
         if encoding == 'utf-8': # 若检测到编码为UTF-8则直接返回成功
             file.close()
             return True
