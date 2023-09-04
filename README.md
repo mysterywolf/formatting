@@ -43,6 +43,22 @@ Please enter work path or file to format: test_dir
 
 > [] 表示内容是可选的
 
+### 指定文件或目录禁用formatting
+
+可以通过在每一级文件夹目录下建立`.ignore_format.yml`文件来指定当前文件夹下需要忽略的文件或文件夹。仓库中提供一个模板文件可以参考：
+
+```yml
+dir_path:
+- test_dir
+
+file_path:
+- test_file.c
+```
+
+如果需要排除整个文件夹，请在dir_path中添加文件夹的名称。
+
+如果需要排除文件，请在file_path中添加该文件的名称。
+
 ### 教学视频
 
 > https://www.bilibili.com/video/BV1XN411Q7n3

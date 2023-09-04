@@ -15,6 +15,7 @@
 # 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
 # 2021-08-29     Meco Man     优化文件后缀名的判断
 # 2023-04-24     BernardXiong 仅当文件有修改时才更新copyright year信息
+# 2023-09-03     smartmx      增加对文件夹目录下.ignore_format.yml的判断来跳过格式化某些指定文件和目录
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -33,6 +34,7 @@ import re
 import chardet
 import datetime
 import filecmp
+import yaml
 
 # 用空格代替TAB键
 # 这里并不是简单的将TAB替换成4个空格
@@ -182,10 +184,6 @@ def convert_to_utf_8(path):
     encoding = get_encode_info(path)
     if encoding == None:
         return False  # 转换失败
-
-    if encoding == 'utf-8': # 若检测到编码为UTF-8则直接返回成功
-        return True
-
     try:
         file = open(path, 'rb+')
         data = file.read()
@@ -214,13 +212,43 @@ def formatfile(file):
 # 递归扫描目录下的所有文件
 def traversalallfile(path):
     filelist = os.listdir(path)
-    for file in filelist:
-        filepath = os.path.join(path, file)
-        if os.path.isdir(filepath):
-            traversalallfile(filepath)
-        elif os.path.isfile(filepath):
-            formatfile(filepath)
-
+    ignore_path = path
+    ignore_file_path = os.path.join(path, ".ignore_format.yml")
+    if not os.path.exists(ignore_file_path):
+        for file in filelist:
+            filepath = os.path.join(path, file)
+            if os.path.isdir(filepath):
+                traversalallfile(filepath)
+            elif os.path.isfile(filepath):
+                formatfile(filepath)
+    else:
+        try:
+            with open(ignore_file_path) as f:
+                ignore_config = yaml.safe_load(f.read())
+            file_ignore = ignore_config.get("file_path", [])
+            dir_ignore = ignore_config.get("dir_path", [])
+            for file in filelist:
+                filepath = os.path.join(path, file)
+                if os.path.isdir(filepath):
+                    if(not file in dir_ignore):
+                        traversalallfile(filepath)
+                    else:
+                        print("dir: " + filepath + " is ignored by " + ignore_file_path)
+                elif os.path.isfile(filepath):
+                    if(not file in file_ignore):
+                        formatfile(filepath)
+                    else:
+                        print("file: " + filepath + " is ignored by " + ignore_file_path)
+        except Exception as e:
+            print(e)
+            print("open " + ignore_file_path + " error, will not check .ignore_format.yml")
+            for file in filelist:
+                filepath = os.path.join(path, file)
+                if os.path.isdir(filepath):
+                    traversalallfile(filepath)
+                elif os.path.isfile(filepath):
+                    formatfile(filepath)
+        
 def formatfiles():
     if len(sys.argv) > 1:
         worktarget = sys.argv[1] # use the first command line parameter as worktarget
