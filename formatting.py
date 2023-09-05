@@ -245,13 +245,7 @@ def traversalallfile(path):
                         print("file: " + filepath + " is ignored by " + ignore_file_path)
         except Exception as e:
             print(e)
-            print("open " + ignore_file_path + " error, will not check .ignore_format.yml")
-            for file in filelist:
-                filepath = os.path.join(path, file)
-                if os.path.isdir(filepath):
-                    traversalallfile(filepath)
-                elif os.path.isfile(filepath):
-                    formatfile(filepath)
+            print("open " + ignore_file_path + " error, will not format this path, please check the ignore file.")
         
 def formatfiles():
     if len(sys.argv) > 1:
