@@ -15,7 +15,7 @@
 # 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
 # 2021-08-29     Meco Man     优化文件后缀名的判断
 # 2023-04-24     BernardXiong 仅当文件有修改时才更新copyright year信息
-# 2023-09-03     smartmx      增加对文件夹目录下.ignore_format.yml的判断来跳过格式化某些指定文件和目录
+# 2023-09-05     smartmx      增加对文件夹目录下.ignore_format.yml的判断来跳过某些指定文件和目录，ascii编码文件不再转换为utf-8
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -184,6 +184,10 @@ def convert_to_utf_8(path):
     encoding = get_encode_info(path)
     if encoding == None:
         return False  # 转换失败
+        
+    if ((encoding == 'utf-8') or (encoding == 'ascii')): # 若检测到编码为UTF-8或者为ascii，则直接返回成功
+        return True
+
     try:
         file = open(path, 'rb+')
         data = file.read()
