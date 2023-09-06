@@ -216,7 +216,6 @@ def formatfile(file):
 # 递归扫描目录下的所有文件
 def traversalallfile(path):
     filelist = os.listdir(path)
-    ignore_path = path
     ignore_file_path = os.path.join(path, ".ignore_format.yml")
     if not os.path.exists(ignore_file_path):
         for file in filelist:
