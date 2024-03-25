@@ -15,6 +15,7 @@
 # 2021-08-24     陈迎春       解决格式化脚本需要和被格式化文件放在同一个磁盘的问题
 # 2021-08-29     Meco Man     优化文件后缀名的判断
 # 2023-04-24     BernardXiong 仅当文件有修改时才更新copyright year信息
+# 2024-03-25     ZhuDongmei   优化版权年份修改，增加将行注释改成块注释
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -33,6 +34,8 @@ import re
 import chardet
 import datetime
 import filecmp
+from comment_parser import comment_parser
+
 
 # 用空格代替TAB键
 # 这里并不是简单的将TAB替换成4个空格
@@ -62,25 +65,56 @@ def formattail(line):
     line = line + '\n'
     return line
 
-#搜索RT-Thread版权信息的截至年份修改至今年
-def change_rtthread_copyright_year(line):
-    search_result = re.search('200[0-9]-20[0-9][0-9]', line, flags=0) # 搜索200x-20xx字样
-    if search_result != None:
-        if re.search('RT-Thread', line, flags=0) != None: # 同时可以在本行中搜索到‘RT-Thread’字样
-            end = search_result.end()
-            str_year = str(datetime.datetime.now().year)
-            line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
+#搜索Real-Thread/RT-Thread版权信息的截至年份修改至今年
+def change_rtt_copyright_year(line):
+    """
+    example:
+    replace Copyright (c) 2006-2023 to Copyright (c) 2006-2024
+    replace Copyright (c) 2006 to  Copyright (c) 2006-2024
+    replace Copyright (C) 2006 to  Copyright (c) 2006-2024
+    replace Copyright (C) 2006, to  Copyright (c) 2006-2024
+    replace Copyright (C) 2006-2023, to  Copyright (c) 2006-2024
+    """
+    sec_year = str(datetime.datetime.now().year)
+    if re.search("Copyright", line, re.IGNORECASE) \
+        and ('Real-Thread' in line or 'RT-Thread' in line):
+        search_pattern = r"Copyright \([cC]\) (\d{4})(?:-(\d{4},?))?"
+        match = re.search(search_pattern, line, re.IGNORECASE)
+        if match:
+            copyright_info = r'Copyright (c) ' + match.group(1) + "-" + sec_year
+            line = re.sub(search_pattern, copyright_info, line)
     return line
 
-#搜索Real-Thread睿赛德版权信息的截至年份修改至今年
-def change_realthread_copyright_year(line):
-    search_result = re.search('20[0-9][0-9]-20[0-9][0-9]', line, flags=0) # 搜索20xx-20xx字样
-    if search_result != None:
-        if re.search('Real-Thread', line, flags=0) != None: # 同时可以在本行中搜索到‘Real-Thread’字样
-            end = search_result.end()
-            str_year = str(datetime.datetime.now().year)
-            line = line.replace(line[end-4:end], str_year)# 将20xx替换为今年
-    return line
+
+def get_line_comment_no(filename):
+    """
+    get comment line line_number
+    """
+    line_comment_no_list = []
+    comments = comment_parser.extract_comments(filename,'text/x-c')
+    for comment in comments:
+        if not comment.is_multiline():
+            line_comment_no_list.append(comment.line_number())
+    return line_comment_no_list
+
+
+def convert_line2block_comment(filename):
+    """
+    convert line comment to block comment each line
+    //     rt_interrupt_enter();
+    to
+    /*     rt_interrupt_enter();*/
+    """
+    comment_line_no_list = get_line_comment_no(filename)
+    if comment_line_no_list:
+        with open(filename, 'r') as fr:
+            lines = fr.readlines()
+            for line_no_list in comment_line_no_list:
+                lines[line_no_list - 1] =  lines[line_no_list - 1].replace('//', '/*',1)
+                lines[line_no_list - 1] =  lines[line_no_list - 1].rstrip('*/\n') + '*/' + '\n'
+
+        with open(filename, 'w') as file:
+            file.writelines(lines)
 
 def format_copyright_year(filename):
     try:
@@ -93,8 +127,7 @@ def format_copyright_year(filename):
         for line in file:
             line_num = line_num + 1
             if line_num < 20: #文件前20行对版权头注释进行扫描，找到截至年份并修改至今年
-                line = change_rtthread_copyright_year(line)
-                line = change_realthread_copyright_year(line)
+                line = change_rtt_copyright_year(line)
 
             file_temp.write(line)
         file_temp.close()
@@ -134,7 +167,8 @@ def format_codes(filename):
             os.remove(filename)
             os.rename(temp_file, filename)
 
-            format_copyright_year(filename) # re-format for copyright year information
+        format_copyright_year(filename) # re-format for copyright year information
+        convert_line2block_comment(filename)
 
     except UnicodeDecodeError:
         print("解码失败，该文件处理失败" + filename)
