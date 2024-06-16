@@ -121,7 +121,7 @@ def format_copyright_year(filename):
         file = open(filename, 'r', encoding = 'utf-8')
 
         temp_file = os.path.join(os.path.dirname(filename), "temp")
-        file_temp = open(temp_file, 'w', encoding='utf-8')
+        file_temp = open(temp_file, 'w', encoding='utf-8', newline='\n')
 
         line_num = 0
         for line in file:
