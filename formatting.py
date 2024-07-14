@@ -65,6 +65,31 @@ def formattail(line):
     line = line + '\n'
     return line
 
+# 将大括号移至下一行
+def move_braces_to_next_line(line):
+    # 检查是否有右括号和花括号
+    if ')' in line and '{' in line:
+        # 获取最后一个匹配的字符
+        right_bracket_index = line.rindex(')')
+        brace_index = line.rindex('{')
+
+        # 如果花括号在右括号后面，将花括号移到和之前行的第一个字母对齐的位置
+        if brace_index > right_bracket_index:
+            # 找到之前行的第一个字母的索引
+            prev_line_index = line[:brace_index].rfind('\n') + 1
+            first_letter_index = prev_line_index
+            while line[first_letter_index] == ' ':
+                first_letter_index += 1
+
+            # 遍历 brace_index 与 right_bracket_index 之间的字符，如果是空格予以剔除
+            while line[right_bracket_index + 1] == ' ':
+                line = line[:right_bracket_index + 1] + line[right_bracket_index + 2:]
+                brace_index -= 1
+
+            # 移动花括号到第一个字母对齐的位置
+            line = line[:brace_index] + '\n' + ' ' * first_letter_index + line[brace_index:]
+    return line
+
 #搜索Real-Thread/RT-Thread版权信息的截至年份修改至今年
 def change_rtt_copyright_year(line):
     """
@@ -156,6 +181,7 @@ def format_codes(filename):
         for line in file:
             line = tab2spaces(line)
             line = formattail(line)
+            line = move_braces_to_next_line(line)
 
             file_temp.write(line)
         file_temp.close()
