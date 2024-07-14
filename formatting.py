@@ -285,7 +285,8 @@ def formatfiles():
     if len(sys.argv) > 1:
         worktarget = sys.argv[1] # use the first command line parameter as worktarget
     else:
-        worktarget = input('Please enter work path or file to format: ')
+        worktarget = os.getcwd() # get current directory
+        # worktarget = input('Please enter work path or file to format: ')
 
     if os.path.isdir(worktarget):
         traversalallfile(worktarget)
