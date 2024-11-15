@@ -16,6 +16,7 @@
 # 2021-08-29     Meco Man     优化文件后缀名的判断
 # 2023-04-24     BernardXiong 仅当文件有修改时才更新copyright year信息
 # 2024-03-25     ZhuDongmei   优化版权年份修改，增加将行注释改成块注释
+# 2024-11-15     wumingzi     增加去除endline空行功能
 
 # 本文件会自动对指定路径下的所有文件包括子文件夹的文件（.c/.h/.cpp/.hpp）进行扫描
 #   1)将源文件编码统一为UTF-8
@@ -60,8 +61,10 @@ def tab2spaces(line):
 
 
 # 删除每行末尾多余的空格 统一使用\n作为结尾
-def formattail(line):
+def formattail(line, is_last_line = False):
     line = line.rstrip()
+    if(is_last_line == True):
+        return line
     line = line + '\n'
     return line
 
@@ -178,9 +181,18 @@ def format_codes(filename):
         file = open(filename, 'r', encoding='utf-8')
         file_temp = open(temp_file, 'w', encoding='utf-8')
 
+         # 逐行读取文件内容
+        lines = []
         for line in file:
+            lines.append(line)
+        
+        # 从末尾开始删除空行
+        while lines and not lines[-1].strip():
+            lines.pop()       
+
+        for line in lines:
             line = tab2spaces(line)
-            line = formattail(line)
+            line = formattail(line, is_last_line = (line == lines[-1]))
             line = move_braces_to_next_line(line)
 
             file_temp.write(line)
