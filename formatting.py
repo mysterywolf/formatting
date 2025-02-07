@@ -138,8 +138,12 @@ def convert_line2block_comment(filename):
         with open(filename, 'r') as fr:
             lines = fr.readlines()
             for line_no_list in comment_line_no_list:
-                lines[line_no_list - 1] =  lines[line_no_list - 1].replace('//', '/*',1)
-                lines[line_no_list - 1] =  lines[line_no_list - 1].rstrip('*/\n') + '*/' + '\n'
+                comment_index = lines[line_no_list - 1].find('//')
+                if lines[line_no_list - 1][comment_index + 2] == ' ':
+                    lines[line_no_list - 1] =  lines[line_no_list - 1].replace('//', '/*',1)
+                else:
+                    lines[line_no_list - 1] =  lines[line_no_list - 1].replace('//', '/* ',1)               
+                lines[line_no_list - 1] =  lines[line_no_list - 1].rstrip('*/\n') + ' */' + '\n'
 
         with open(filename, 'w') as file:
             file.writelines(lines)
